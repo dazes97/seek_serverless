@@ -1,0 +1,125 @@
+useDotenv: true
+frameworkVersion: "3"
+service: todos
+provider:
+  name: aws
+  architecture: arm64
+  region: us-east-1
+  stage: ${opt:stage, 'dev'}
+  runtime: python3.12
+  profile: seek_serverless
+  deploymentMethod: direct
+  endpointType: REGIONAL
+  memorySize: 128
+  apiGateway:
+    description: "Apigateway for Todos"
+
+  environment:
+    DYNAMODB_TABLE: ${env:DYNAMODB_TABLE}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "dynamodb:PutItem"
+        - "dynamodb:GetItem"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:DeleteItem"
+        - "dynamodb:Scan"
+        - "dynamodb:Query"
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${env:DYNAMODB_TABLE}"
+
+functions:
+  list:
+    handler: src/handlers/list.all
+    events:
+      - http:
+          path: /
+          method: GET
+          cors: true
+          authorizer:
+            arn: arn:aws:lambda:us-east-1:587915578340:function:authorizer-${opt:stage, 'dev'}-authorizer
+            type: request
+  create:
+    handler: src/handlers/create.create
+    events:
+      - http:
+          path: /
+          method: POST
+          cors: true
+          authorizer:
+            arn: arn:aws:lambda:us-east-1:587915578340:function:authorizer-${opt:stage, 'dev'}-authorizer
+            type: request
+  delete:
+    handler: src/handlers/delete.delete
+    events:
+      - http:
+          path: /{id}
+          method: DELETE
+          cors: true
+          authorizer:
+            arn: arn:aws:lambda:us-east-1:587915578340:function:authorizer-${opt:stage, 'dev'}-authorizer
+            type: request
+  update:
+    handler: src/handlers/update.update
+    events:
+      - http:
+          path: /{id}
+          method: PUT
+          cors: true
+          authorizer:
+            arn: arn:aws:lambda:us-east-1:587915578340:function:authorizer-${opt:stage, 'dev'}-authorizer
+            type: request
+resources:
+  Resources:
+    TodosTable:
+      Type: "AWS::DynamoDB::Table"
+      Properties:
+        TableName: "${env:DYNAMODB_TABLE}"
+        AttributeDefinitions:
+          - AttributeName: "id"
+            AttributeType: "S"
+        KeySchema:
+          - AttributeName: "id"
+            KeyType: "HASH"
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    requirements: requirements.txt
+    slim: true
+    strip: true
+    noDeploy:
+      - boto3
+      - botocore
+      - docutils
+      - jmespath
+      - pip
+      - python-dateutil
+      - s3transfer
+      - setuptools
+      - six
+      - urllib3
+
+plugins:
+  - serverless-offline
+  - serverless-python-requirements
+
+package:
+  individually: true
+  exclude:
+    - node_modules/**
+    - .requirements/**
+    - env/**
+    - README.md
+    - package.json
+    - package-lock.json
+    - requirements.txt
+    - .git/**
+    - .vscode/**
+    - tests/**
+    - __pycache__/**
+    - .virtualenv/**
+    - .venv/**
+    - venv/**

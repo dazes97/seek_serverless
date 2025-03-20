@@ -1,0 +1,58 @@
+useDotenv: true
+frameworkVersion: '3'
+service: authorizer
+provider:
+  name: aws
+  architecture: arm64
+  deploymentMethod: direct
+  runtime: python3.12
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  profile: seek_serverless
+  memorySize: 128
+  environment:
+    JWT_SECRET: ${env:JWT_SECRET}
+
+functions:
+  authorizer:
+    handler: src/handlers/authorizer.authorize
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    requirements: requirements.txt
+    slim: true
+    strip: true
+    noDeploy:
+      - boto3
+      - botocore
+      - docutils
+      - jmespath
+      - pip
+      - python-dateutil
+      - s3transfer
+      - setuptools
+      - six
+      - urllib3
+
+plugins:
+  - serverless-offline
+  - serverless-python-requirements
+
+package:
+  individually: true
+  exclude:
+    - node_modules/**
+    - .requirements/**
+    - env/**
+    - README.md
+    - package.json
+    - package-lock.json
+    - requirements.txt
+    - .git/**
+    - .vscode/**
+    - tests/**
+    - __pycache__/**
+    - .virtualenv/**
+    - .venv/**
+    - venv/**

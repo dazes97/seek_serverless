@@ -1,0 +1,10 @@
+services:
+  service-auth:
+    path: auth
+  service-authorizer:
+    path: authorizer
+  service-todos:
+    path: todos
+    dependsOn:
+      - service-authorizer
+      - service-auth

@@ -1,0 +1,10 @@
+{
+  "name": "todos",
+  "version": "1.0.0",
+  "description": "todos service for serverless application",
+  "author": "dazes97",
+  "devDependencies": {
+    "serverless-offline": "^14.4.0",
+    "serverless-python-requirements": "^6.1.2"
+  }
+}

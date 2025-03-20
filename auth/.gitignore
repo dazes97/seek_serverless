@@ -1,0 +1,10 @@
+__pycache__
+
+.env
+.venv
+
+.serverless/
+.requirements
+node_modules/
+.prettierrc
+package-lock.json

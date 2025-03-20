@@ -1,0 +1,10 @@
+{
+  "name": "auth",
+  "version": "1.0.0",
+  "description": "Auth service for serverless applications",
+  "author": "dazes97",  
+  "devDependencies": {
+    "serverless-offline": "^14.4.0",
+    "serverless-python-requirements": "^6.1.2"
+  }
+}
