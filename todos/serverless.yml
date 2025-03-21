@@ -7,15 +7,15 @@ provider:
   region: us-east-1
   stage: ${opt:stage, 'dev'}
   runtime: python3.12
-  profile: seek_serverless
+  profile: ${env:PROFILE}
   deploymentMethod: direct
   endpointType: REGIONAL
   memorySize: 128
   apiGateway:
     description: "Apigateway for Todos"
-
   environment:
     DYNAMODB_TABLE: ${env:DYNAMODB_TABLE}
+    PROFILE: ${env:PROFILE}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -26,7 +26,6 @@ provider:
         - "dynamodb:Scan"
         - "dynamodb:Query"
       Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${env:DYNAMODB_TABLE}"
-
 functions:
   list:
     handler: src/handlers/list.all

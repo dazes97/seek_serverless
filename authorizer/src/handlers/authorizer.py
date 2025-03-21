@@ -3,6 +3,7 @@ from ..services.authorizer_service import AuthorizerService
 
 def authorize(event, _):
     token = event['headers'].get('Authorization')
-    print(f'Token del header: {token}')
+    if (token is None):
+        token = event['headers'].get('authorization')
     authorizer_service = AuthorizerService()
     return authorizer_service.authorize(token)

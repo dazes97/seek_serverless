@@ -8,10 +8,11 @@ provider:
   runtime: python3.12
   stage: ${opt:stage, 'dev'}
   region: us-east-1
-  profile: seek_serverless
+  profile: ${env:PROFILE}
   memorySize: 128
   environment:
     JWT_SECRET: ${env:JWT_SECRET}
+    PROFILE: ${env:PROFILE}
 
 functions:
   auth:
@@ -20,6 +21,7 @@ functions:
       - http:
           path: /
           method: POST
+          cors: true
 
 custom:
   pythonRequirements:

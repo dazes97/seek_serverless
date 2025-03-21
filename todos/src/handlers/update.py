@@ -14,26 +14,46 @@ def update(event, __):
             'statusCode': 400,
             'headers': {
                 'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': True,
-                'Content-Type': 'application/json',
+                'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Methods': '*',
+                'Content-Type': 'application/json'
             },
             'body': json.dumps({
                 'message': 'Invalid input',
-                'errors': str(e)
+                'errors': str(e),
+                "status": "error"
             })
         }
 
-    task_service = TaskService()
-    task_service.update(id, update_status.status)
-    return {
-        'statusCode': 201,
-        'headers': {
-            'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Credentials': True,
-            'Content-Type': 'application/json',
-        },
-        'body': json.dumps({
-            'message': f'Item marked as {update_status.status} successfully',
-            'data': []
-        })
-    }
+    try:
+        task_service = TaskService()
+        task_service.update(id, update_status.status)
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Methods': '*',
+                'Content-Type': 'application/json'
+            },
+            'body': json.dumps({
+                'message': f'Item marked as {update_status.status} successfully',
+                'data': [],
+                'status': 'success'
+            })
+        }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'headers': {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': '*',
+                'Access-Control-Allow-Methods': '*',
+                'Content-Type': 'application/json'
+            },
+            'body': json.dumps({
+                "message": "An error occurred while updating the task",
+                "error": str(e),
+                "status": "error"
+            })
+        }

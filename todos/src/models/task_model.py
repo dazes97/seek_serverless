@@ -18,4 +18,4 @@ class CreateItem(BaseModel):
 
 
 class UpdateItem(BaseModel):
-    status: Literal['En progreso', 'Terminado']
+    status: Literal['Por hacer', 'En progreso', 'Terminado']
